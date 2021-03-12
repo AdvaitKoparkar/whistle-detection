@@ -4,6 +4,7 @@ import tensorflow.keras.layers as layers
 
 class M02(object):
     def __init__(self):
+        self.name = self.__class__.__name__
         self.conv01 = tf.keras.layers.Conv2D(filters=8,
                                    kernel_size=(5,5),
                                    strides=(2,2),
