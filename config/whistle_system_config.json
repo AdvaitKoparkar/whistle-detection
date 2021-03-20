@@ -1,0 +1,9 @@
+{
+    "sound_config": {
+        "sample_rate": 4000,
+        "sample_duration": 4
+    },
+    "recording_config": {
+        "save_path": ""
+    }
+}
