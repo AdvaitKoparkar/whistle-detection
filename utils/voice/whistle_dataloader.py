@@ -8,21 +8,24 @@ from tqdm.notebook import tqdm
 import tensorflow as tf
 
 from utils.voice.wav_utils import pad_random, get_spectrogram
+from utils.config_utils import read_config
 
 import pdb
 
 class WhistleDataloaderSpectrogram(tf.keras.utils.Sequence):
     def __init__(self, bg_files, fg_files, wh_files, **kwargs):
         self.name = self.__class__.__name__
+        default_config = read_config()
         self.bg_files = bg_files
         self.fg_files = fg_files
         self.wh_files = wh_files
         self.shuffle = kwargs.get('shuffle', True)
-        self.batch_size = kwargs.get('batch_size', 64)
-        self.epoch_size = kwargs.get('epoch_size', 500)
-        self.spectrogram_dim = kwargs.get('spectrogram_size', (64,64))
-        self.wav_cfg = kwargs.get('wav_cfg', {'sr': 4000, 'duration': 4, 'mono': True})
-        self.spec_cfg = kwargs.get('spec_cfg', {'n_fft': 256, 'hop_length': 512, 'window': 'hann'})
+        self.batch_size = kwargs.get('batch_size', default_config['data_config']['batch_size'])
+        self.epoch_size = kwargs.get('epoch_size', default_config['data_config']['epoch_size'])
+        self.spectrogram_dim = kwargs.get('spectrogram_size', (default_config['spectrogram_config']['spectrogram_size'],default_config['spectrogram_config']['spectrogram_size']))
+        self.wav_cfg = kwargs.get('wav_cfg', {'sr': default_config['sound_config']['sr'], 'duration': default_config['sound_config']['duration'], 'mono': True})
+        # self.spec_cfg = kwargs.get('spec_cfg', {'n_fft': 256, 'hop_length': 512, 'window': 'hann'})
+        self.spec_cfg = kwargs.get('spec_cfg', {'n_fft': default_config['spectrogram_config']['n_fft'], 'hop_length': default_config['spectrogram_config']['hop_length'], 'window': default_config['spectrogram_config']['window'], 'sr': default_config['sound_config']['sr']})
 
     def _get_whistle_data(self, fname):
         rev = np.random.uniform(low=0, high=1)

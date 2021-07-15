@@ -1,9 +1,16 @@
 {
     "sound_config": {
-        "sample_rate": 4000,
-        "sample_duration": 4
+        "sr": 4000,
+        "duration": 4
     },
-    "recording_config": {
-        "save_path": ""
+    "spectrogram_config": {
+        "spectrogram_size": 64,
+        "n_fft": 256,
+        "hop_length": 512,
+        "window": "hann"
+    },
+    "data_config": {
+        "batch_size": 64,
+        "epoch_size": 500
     }
 }

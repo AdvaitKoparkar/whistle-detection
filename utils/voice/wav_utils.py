@@ -2,6 +2,7 @@ import os
 import librosa
 import numpy as np
 from glob import glob
+from scipy.signal import stft
 from skimage.transform import resize
 from librosa.feature import melspectrogram
 
@@ -21,8 +22,13 @@ def resize_spectrogram(spectrogram):
     return spectrogram
 
 def get_spectrogram(waveform, spec_cfg):
-    spectrogram = np.abs(librosa.stft(waveform, **spec_cfg))
+    # spectrogram = np.abs(librosa.stft(waveform, **spec_cfg))
     # spectrogram = librosa.feature.chroma_stft(waveform)
+    # scipy
+    _,_,spectrogram = stft(waveform, fs=spec_cfg['sr'],
+                          nperseg=spec_cfg['n_fft'],
+                          window=spec_cfg['window'])
+    spectrogram = np.abs(spectrogram)
     spectrogram = resize_spectrogram(spectrogram)
     return spectrogram
 
@@ -32,3 +38,19 @@ def find_files(base_folder, pattern='*.wav'):
         matched_files = glob(os.path.join(root, pattern))
         files += matched_files
     return files
+
+def make_n_audio_snippets(src_file, n_snippets, **cfg):
+    src_waveform, sr = librosa.load(src_file, sr=cfg['sr'])
+    snippets = []
+    snippet_duration_samples = int(cfg['duration'] * cfg['sr'])
+    max_st_idx = src_waveform.shape[0] - snippet_duration_samples
+    for sidx in range(n_snippets):
+        st_idx = np.random.randint(low=0, high=max_st_idx, size=1)[0]
+        _snippet = src_waveform[st_idx:st_idx+snippet_duration_samples]
+        snippets.append(_snippet)
+    return snippets
+
+def clear_folder(folder, pattern='*.wav'):
+    files = find_files(folder, pattern)
+    for file in files:
+        os.remove(file)
