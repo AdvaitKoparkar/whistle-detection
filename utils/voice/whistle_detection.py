@@ -2,8 +2,6 @@ from tqdm import tqdm
 import tensorflow as tf
 from .experiment import Experiment
 
-import pdb
-
 class WhistleDetection(Experiment):
     '''
     '''

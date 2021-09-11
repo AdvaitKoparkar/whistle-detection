@@ -10,8 +10,6 @@ import tensorflow as tf
 
 from utils.voice.wav_utils import *
 
-import pdb
-
 class WhistleDataloader(object):
     def __init__(self, fg_files, bg_files, whistle_files, **kwargs):
         self.name = self.__class__.__name__

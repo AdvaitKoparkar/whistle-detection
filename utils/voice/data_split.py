@@ -19,24 +19,25 @@ def split_data(base_folders, seed=None):
     clear_folder(train_folder, '*.csv')
     clear_folder(test_folder, '*.csv')
 
-    fg_train_csv_fpath = os.path.join(train_folder, 'fg.csv')
-    fg_test_csv_fpath = os.path.join(test_folder, 'fg.csv')
-    for fg_folder in base_folders['fg_folders']:
-        fg_split = {'test': 0.3}
-        fg_train, fg_test = _split_folder(fg_folder, fg_split, seed)
-        if not os.path.isfile(fg_train_csv_fpath):
-            pd.DataFrame({'fname': fg_train}).to_csv(fg_train_csv_fpath, index=False)
-        else:
-            df0 = pd.read_csv(fg_train_csv_fpath)
-            df = pd.concat([df0, pd.DataFrame({'fname': fg_train})])
-            df.to_csv(fg_train_csv_fpath, index=False)
+    if 'fg_folders' in base_folders:
+        fg_train_csv_fpath = os.path.join(train_folder, 'fg.csv')
+        fg_test_csv_fpath = os.path.join(test_folder, 'fg.csv')
+        for fg_folder in base_folders['fg_folders']:
+            fg_split = {'test': 0.3}
+            fg_train, fg_test = _split_folder(fg_folder, fg_split, seed)
+            if not os.path.isfile(fg_train_csv_fpath):
+                pd.DataFrame({'fname': fg_train}).to_csv(fg_train_csv_fpath, index=False)
+            else:
+                df0 = pd.read_csv(fg_train_csv_fpath)
+                df = pd.concat([df0, pd.DataFrame({'fname': fg_train})])
+                df.to_csv(fg_train_csv_fpath, index=False)
 
-        if not os.path.isfile(fg_test_csv_fpath):
-            pd.DataFrame({'fname': fg_test}).to_csv(fg_test_csv_fpath, index=False)
-        else:
-            df0 = pd.read_csv(fg_test_csv_fpath)
-            df = pd.concat([df0, pd.DataFrame({'fname': fg_test})])
-            df.to_csv(fg_test_csv_fpath, index=False)
+            if not os.path.isfile(fg_test_csv_fpath):
+                pd.DataFrame({'fname': fg_test}).to_csv(fg_test_csv_fpath, index=False)
+            else:
+                df0 = pd.read_csv(fg_test_csv_fpath)
+                df = pd.concat([df0, pd.DataFrame({'fname': fg_test})])
+                df.to_csv(fg_test_csv_fpath, index=False)
 
     bg_train_csv_fpath = os.path.join(train_folder, 'bg.csv')
     bg_test_csv_fpath = os.path.join(test_folder, 'bg.csv')

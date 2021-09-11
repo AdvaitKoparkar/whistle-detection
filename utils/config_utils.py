@@ -4,8 +4,6 @@ sys.path.append('../')
 import os
 import json
 
-import pdb
-
 DEFAULT_CONFIG_PATH = os.path.join('..', 'config', 'whistle_system_config.json')
 
 def read_config():

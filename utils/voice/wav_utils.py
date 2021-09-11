@@ -6,8 +6,6 @@ from scipy.signal import stft
 from skimage.transform import resize
 from librosa.feature import melspectrogram
 
-import pdb
-
 def pad_random(waveform, padded_size):
     wav_len = waveform.shape[0]
     waveform_padded = np.zeros((padded_size,), dtype=waveform.dtype)
@@ -21,16 +19,33 @@ def resize_spectrogram(spectrogram):
                          mode='reflect', anti_aliasing=True)
     return spectrogram
 
-def get_spectrogram(waveform, spec_cfg):
-    # spectrogram = np.abs(librosa.stft(waveform, **spec_cfg))
-    # spectrogram = librosa.feature.chroma_stft(waveform)
-    # scipy
-    _,_,spectrogram = stft(waveform, fs=spec_cfg['sr'],
+def get_spectrogram(waveform, spec_cfg, resize=True, spec_only=True):
+    spec_f, spec_t, spectrogram = stft(waveform, fs=spec_cfg['sr'],
                           nperseg=spec_cfg['n_fft'],
-                          window=spec_cfg['window'])
-    spectrogram = np.abs(spectrogram)
-    spectrogram = resize_spectrogram(spectrogram)
-    return spectrogram
+                          window=spec_cfg['window'],
+                          noverlap=spec_cfg['n_fft']-spec_cfg['hop_length'],
+                          )
+
+    if spec_cfg['mode'].lower() == 'psd':
+        spectrogram = np.abs(spectrogram)**2
+    elif spec_cfg['mode'].lower() == 'magnitude':
+        spectrogram = np.abs(spectrogram)
+    elif spec_cfg['mode'].lower() == 'complex':
+        spectrogram = spectrogram
+    elif spec_cfg['mode'].lower() == 'angle':
+        spectrogram = np.angle(spectrogram)
+    elif spec_cfg['mode'].lower() == 'db':
+        spectrogram[spectrogram == 0] = 1e-8
+        spectrogram = 10*np.log10(np.abs(spectrogram)**2)
+
+    # resize spec 2-D
+    if resize:
+        spectrogram = resize_spectrogram(spectrogram)
+
+    if spec_only:
+        return spectrogram
+    else:
+        return spec_f, spec_t, spectrogram
 
 def find_files(base_folder, pattern='*.wav'):
     files = []

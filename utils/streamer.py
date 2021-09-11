@@ -12,4 +12,3 @@ class Streamer(object):
     '''
     def __init__(self):
         config = read_config()
-        self.sample_rate =

@@ -1,16 +1,34 @@
 {
     "sound_config": {
-        "sr": 4000,
+        "sr": 16000,
         "duration": 4
     },
     "spectrogram_config": {
+        "sr": 8000,
         "spectrogram_size": 64,
-        "n_fft": 256,
-        "hop_length": 512,
-        "window": "hann"
+        "n_fft": 512,
+        "hop_length": 256,
+        "window": "hann",
+        "mode": "db"
     },
     "data_config": {
         "batch_size": 64,
-        "epoch_size": 500
+        "epoch_size": 50000
+    },
+    "mfcc_config": {
+        "spectrogram_config": {
+            "sr": 16000,
+            "n_fft": 512,
+            "hop_length": 256,
+            "window": "hann",
+            "mode": "psd"
+        },
+        "num_banks": 23,
+        "low_freq": 0,
+        "high_freq": 1600,
+        "num_banks": 23,
+        "num_ceps": 12,
+        "apply_lifters": 1,
+        "num_lifters": 22
     }
 }
