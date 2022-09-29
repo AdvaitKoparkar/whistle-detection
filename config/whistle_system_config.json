@@ -1,6 +1,6 @@
 {
     "sound_config": {
-        "sr": 16000,
+        "sr": 8000,
         "duration": 4
     },
     "spectrogram_config": {
@@ -17,18 +17,17 @@
     },
     "mfcc_config": {
         "spectrogram_config": {
-            "sr": 16000,
+            "sr": 8000,
             "n_fft": 512,
             "hop_length": 256,
             "window": "hann",
             "mode": "psd"
         },
-        "num_banks": 23,
         "low_freq": 0,
-        "high_freq": 1600,
-        "num_banks": 23,
-        "num_ceps": 12,
-        "apply_lifters": 1,
+        "high_freq": 4000,
+        "num_banks": 64,
+        "num_ceps": 26,
+        "apply_lifters": 0,
         "num_lifters": 22
     }
 }

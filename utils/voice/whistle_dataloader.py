@@ -90,8 +90,8 @@ class WhistleDataloaderSpectrogram(WhistleDataloader):
         return self.epoch[idx]
 
 class WhistleDataloaderMFCC(WhistleDataloader):
-    def __init__(self, bg_files, fg_files, wh_files, **kwargs):
-        super(WhistleDataloaderMFCC, self).__init__(bg_files, fg_files, wh_files, kwargs)
+    def __init__(self, bg_files, wh_files, **kwargs):
+        super(WhistleDataloaderMFCC, self).__init__(bg_files, wh_files, kwargs)
         default_config = read_config()
         self.wav_cfg = kwargs.get('wav_cfg', {'sr': default_config['sound_config']['sr'], 'duration': default_config['sound_config']['duration'], 'mono': True})
         self.mfcc_cfg = kwargs.get('mfcc_cfg', default_config['mfcc_config'])
@@ -99,13 +99,13 @@ class WhistleDataloaderMFCC(WhistleDataloader):
 
     def prepare_epoch(self):
         if self.shuffle:
-            fnames = np.random.choice(self.fg_files, size=self.epoch_size)
+            fnames = np.random.choice(self.bg_files, size=self.epoch_size)
         else:
-            fnames = self.fg_files[0:self.epoch_size]
+            fnames = self.bg_files[0:self.epoch_size]
 
         self.epoch_fnames = fnames
         max_len = self.wav_cfg['sr'] * self.wav_cfg['duration']
-        mfcc_cols = max_len //(self.mfcc_cfg['spectrogram_config']['n_fft']+self.mfcc_cfg['spectrogram_config']['hop_length']) + 1
+        mfcc_cols = max_len //(self.mfcc_cfg['spectrogram_config']['hop_length']) + 1
         self.epoch_waveforms = np.zeros((len(fnames), max_len))
         self.epoch_X = np.zeros((len(fnames), self.mfcc_cfg['num_ceps'], mfcc_cols, 1), dtype=np.float32)
         self.epoch_y = np.random.randint(low=0, high=2, size=(len(fnames),), dtype=np.uint8)
@@ -122,8 +122,8 @@ class WhistleDataloaderMFCC(WhistleDataloader):
                 beta = np.random.uniform(low=0.25, high=0.90)
                 w = beta * w_whistle + (1-beta) * w
             self.epoch_waveforms[idx] = w
-            mfcc = mfcc(w, filterbanks=self.filterbanks)
-            self.epoch_X[idx, :, :, 0] = spectrogram
+            m = mfcc(w, filterbanks=self.filterbanks)
+            self.epoch_X[idx, :, :, 0] = m
 
         data_generator = tf.keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True)
         self.epoch = data_generator.flow(x=self.epoch_X, y=self.epoch_y,

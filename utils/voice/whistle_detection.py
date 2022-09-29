@@ -9,7 +9,15 @@ class WhistleDetection(Experiment):
         '''
         '''
         self.logger.log('starting training')
-        callbacks = [self.logger]
+
+        model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
+                                    filepath='model.h5',
+                                    save_weights_only=True,
+                                    monitor='val_accuracy',
+                                    mode='max',
+                                    save_best_only=True)
+
+        callbacks = [self.logger, model_checkpoint_callback]
         if init_model is not None:
             self.model = tf.keras.models.load_model(init_model)
         self.model.compile(optimizer=self.optimizer, loss=self.loss_object, metrics=self.metrics.metric_set)
