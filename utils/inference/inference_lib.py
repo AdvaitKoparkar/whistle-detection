@@ -2,13 +2,14 @@ import scipy.signal
 import numpy as np
 
 class Conv2D(object):
-    def __init__(self, weights, config):
+    def __init__(self, weights, config={}):
         self.weights = weights
         self.padding  = config.get('padding', 'same')
         self.strides   = config.get('strides', (1,1))
 
     def __call__(self, X):
-        (filters, bias) = self.weights
+        filters = self.weights[0].numpy()
+        bias    = self.weights[1].numpy()
         num_filters = filters.shape[3]
         kernel_size = filters.shape[0:2]
         num_channels = X.shape[3]
@@ -33,14 +34,23 @@ class Conv2D(object):
                                                                            mode='valid')[1::self.strides[0], 1::self.strides[1]]
         return output
 
-class Dense(object):
-    def __init__(self, ):
-        pass
-
 class BatchNormalization(object):
-    def __init__(self, ):
+    def __init__(self, weights, config={}):
+        self.weights = weights
+        self.epsilon = config.get('epsilon', 1e-24)
+
+    def __call__(self, X):
+        gamma = self.weights[0].numpy()
+        beta  = self.weights[1].numpy()
+        mu    = self.weights[2].numpy()
+        sigma = self.weights[3].numpy()
+        output = gamma * (X-mu) / (np.sqrt(sigma + self.epsilon)) + beta
+        return output
+
+class ReLU(object):
+    def __init__(self, config):
         pass
 
-class MaxPool2D(object):
-    def __init__(self):
-        pass
+    def __call__(self, X):
+        output = np.maximum(0, X)
+        return output
